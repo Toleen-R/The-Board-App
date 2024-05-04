@@ -45,12 +45,12 @@ const SaveButton = styled.button`
     position: absolute;
     bottom: 10px;
     right: 10px;
-    background-color: ${({ disabled }) => (disabled ? '#ccc' : '#4caf50')};
+    background-color: #4caf50;
     color: white;
     border: none;
     border-radius: 4px;
     padding: 8px 16px;
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+    cursor: pointer;
 `;
 
 const EditableInput = styled.input`
@@ -72,27 +72,27 @@ const EditableTextarea = styled.textarea`
 function TaskDetail({ task: initialTask, onClose, onDelete, onUpdate }) {
     const [editedTask, setEditedTask] = useState(initialTask);
     const [isModified, setIsModified] = useState(false);
-
+    const { tasks, deleteTask } = useContext(TaskContext);
+    
     useEffect(() => {
-        setEditedTask(initialTask); // Load initial task from props
-        setIsModified(false); // Reset isModified when task changes
+        setEditedTask(initialTask); 
+        setIsModified(false); 
     }, [initialTask]);
 
     const handleTaskUpdate = () => {
-        localStorage.setItem('editedTask', JSON.stringify(editedTask)); // Save updated task to local storage
         onUpdate(editedTask);
         onClose();
     };
 
     const handleInputChange = (e) => {
         setEditedTask({ ...editedTask, [e.target.name]: e.target.value });
-        setIsModified(true); // Set isModified to true when input changes
+        setIsModified(true); 
     };
 
     return (
         <TaskDetailContainer>
             <CloseButton onClick={onClose}>
-                <FontAwesomeIcon icon={faX} />
+                <FontAwesomeIcon icon={faTimes} />
             </CloseButton>
             <EditableInput
                 type="text"
@@ -105,8 +105,8 @@ function TaskDetail({ task: initialTask, onClose, onDelete, onUpdate }) {
                 value={editedTask.description}
                 onChange={handleInputChange}
             />
-            <DeleteButton onClick={onDelete}>Delete Task</DeleteButton>
-            <SaveButton disabled={!isModified} onClick={handleTaskUpdate}>
+            <DeleteButton onClick={() => { deleteTask(editedTask.id); onClose(); }}>Delete Task</DeleteButton>
+            <SaveButton onClick={() => { handleTaskUpdate(); onClose(); }}>
                 Save Task
             </SaveButton>
         </TaskDetailContainer>
