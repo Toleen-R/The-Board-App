@@ -2,18 +2,17 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import Header from './components/Header';
 import Columns from './components/Columns';
-import { TaskProvider } from './context/TaskContext'; // Import TaskProvider from TaskContext.jsx
+import { TaskProvider } from './context/TaskContext'; 
 
 import './App.css';
 
 function App() {
-    const { columnName } = useParams(); // Access columnName from the route
+    const { columnName } = useParams(); 
 
     return (
         <TaskProvider>
             <div>
                 <Header />
-                {/* Pass the columnName to the Columns component */}
                 <Columns columnName={columnName} />
             </div>
         </TaskProvider>
