@@ -69,25 +69,28 @@ const EditableTextarea = styled.textarea`
     border-radius: 4px;
 `;
 
-function TaskDetail({ task: initialTask, onClose, onDelete, onUpdate }) {
-    const [editedTask, setEditedTask] = useState(initialTask);
+function TaskDetail({ task, onClose, onDelete, onUpdate, listId }) {
+    const [editedTask, setEditedTask] = useState(task);
     const [isModified, setIsModified] = useState(false);
-    const { tasks, deleteTask } = useContext(TaskContext);
-    
+    const { tasks, updateTask, deleteTask } = useContext(TaskContext);
+
     useEffect(() => {
-        setEditedTask(initialTask); 
+   //     setEditedTask(task); 
         setIsModified(false); 
-    }, [initialTask]);
+    }, [task]);
 
     const handleTaskUpdate = () => {
-        onUpdate(editedTask);
+        updateTask(editedTask, listId);
+        console.log (editedTask);
         onClose();
-    };
+    };    
 
     const handleInputChange = (e) => {
         setEditedTask({ ...editedTask, [e.target.name]: e.target.value });
         setIsModified(true); 
     };
+
+
 
     return (
         <TaskDetailContainer>
@@ -105,10 +108,8 @@ function TaskDetail({ task: initialTask, onClose, onDelete, onUpdate }) {
                 value={editedTask.description}
                 onChange={handleInputChange}
             />
-            <DeleteButton onClick={() => { deleteTask(editedTask.id); onClose(); }}>Delete Task</DeleteButton>
-            <SaveButton onClick={() => { handleTaskUpdate(); onClose(); }}>
-                Save Task
-            </SaveButton>
+            <DeleteButton onClick={() => { deleteTask(editedTask.id, listId); onClose(); }}>Delete Task</DeleteButton>
+            <SaveButton onClick={handleTaskUpdate}>Save Task</SaveButton>
         </TaskDetailContainer>
     );
 }

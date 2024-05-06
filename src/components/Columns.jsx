@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -6,6 +6,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
 import Tasks from './Tasks';
 import TaskForm from './TaskForm';
+import TaskContext from '../context/TaskContext';
 
 const ColumnsContainer = styled.div`
     display: flex;
@@ -58,19 +59,8 @@ const getColor = (listId) => {
 };
 
 function Columns() {
-    const [tasks, setTasks] = useState({ todo: [], doing: [], done: [] });
     const [showTaskForm, setShowTaskForm] = useState(false);
-
-    const addTask = (task, listId) => {
-        const newList = { ...tasks, [listId]: [...tasks[listId], { ...task, id: uuidv4() }] };
-        setTasks(newList);
-        setShowTaskForm(false);
-    };
-
-    const deleteTask = (taskId, listId) => {
-        const newList = { ...tasks, [listId]: tasks[listId].filter(task => task.id !== taskId) };
-        setTasks(newList);
-    };
+    const {tasks, setTasks} = useContext (TaskContext)
 
     const onDragEnd = (result) => {
         const { source, destination, draggableId } = result;
@@ -111,7 +101,7 @@ function Columns() {
                         </StyledHeader>
                         {listId === 'todo' && (
                             <>
-                                {showTaskForm && <TaskForm onSubmit={task => addTask(task, listId)} />}
+                                {showTaskForm && <TaskForm setShowTaskForm = {setShowTaskForm} listId={listId} />}
                                 <AddTaskButtonHover onClick={() => setShowTaskForm(true)}>
                                     <FontAwesomeIcon icon={faPlus} /> Skapa Ny Uppgift
                                 </AddTaskButtonHover>
@@ -120,7 +110,7 @@ function Columns() {
                         <Droppable droppableId={listId}>
                             {(provided) => (
                                 <div ref={provided.innerRef} {...provided.droppableProps}>
-                                    {list.map((task, index) => (
+                                    {list.map((task, index) => ( 
                                         <Draggable key={task.id} draggableId={task.id} index={index}>
                                             {(provided) => (
                                                 <div
@@ -129,10 +119,9 @@ function Columns() {
                                                     {...provided.dragHandleProps}
                                                 >
                                                     <Tasks
-                                                        title={task.title}
-                                                        dateAdded={new Date().toLocaleString()}
-                                                        description={task.description}
+                                                        task={task}
                                                         onDelete={() => deleteTask(task.id, listId)}
+                                                        listId={listId}
                                                     />
                                                 </div>
                                             )}

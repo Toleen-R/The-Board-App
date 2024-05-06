@@ -10,13 +10,17 @@ export const TaskProvider = ({ children }) => {
     done: []
   });
 
-  const [showTaskForm, setShowTaskForm] = useState(false);
-
   const addTask = (task, listId) => {
-    const newList = { ...tasks, [listId]: [...tasks[listId], { ...task, id: uuidv4() }] };
+   
+    const dateTime = new Date().toLocaleString();
+    const newList = { ...tasks, [listId]: [...tasks[listId], { ...task, id: uuidv4(), date: dateTime}] };
     setTasks(newList);
-    setShowTaskForm(false);
   };
+  
+  const updateTask = (updatedTask, listId) => {
+    const newList = { ...tasks, [listId]: tasks[listId].map(task => task.id === updatedTask.id ? updatedTask : task)}
+    setTasks(newList);
+ };
 
   const deleteTask = (taskId, listId) => {
     const newList = { ...tasks, [listId]: tasks[listId].filter(task => task.id !== taskId) };
@@ -28,9 +32,9 @@ export const TaskProvider = ({ children }) => {
       value={{
         tasks,
         addTask,
+        updateTask,
         deleteTask,
-        showTaskForm,
-        setShowTaskForm
+        setTasks
       }}
     >
       {children}
