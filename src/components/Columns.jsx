@@ -81,7 +81,7 @@ function Columns() {
 
         setTasks(newList);
     };
-
+    console.log (tasks);
     useEffect(() => {
         const savedTasks = JSON.parse(localStorage.getItem('tasks'));
         if (savedTasks) setTasks(savedTasks);
